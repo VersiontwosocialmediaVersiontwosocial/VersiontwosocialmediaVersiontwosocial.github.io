@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamPlay Pro- Ultimate Video Streaming</title>
+    <!-- Link to CSS -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText">Notification message</span>
+    </div>
+    <div class="theme-toggle" id="themeToggle" role="button" aria-label="Toggle Theme">
+        <i class="fas fa-moon"></i>
+    </div>
+    <!-- Menu Toggle Button -->
+    <div class="menu-toggle" id="menuToggle" role="button" aria-label="Toggle Menu">
+        <i class="fas fa-bars"></i>
+    </div>
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <!-- Sidebar Menu -->
+    <nav class="sidebar" id="sidebar" role="navigation" aria-label="Main Navigation">
+        <div class="sidebar-header">
+            <h2 id="sidebarTitle" aria-label="Sidebar Title">StreamPlay Pro</h2>
+            <p id="sidebarSubtitle" aria-label="Sidebar Subtitle">Navigation</p>
+        </div>
+        <ul class="menu-list" id="menuList" role="menu">
+            <!-- Menu items will be dynamically populated -->
+        </ul>
+        <div class="sidebar-footer">
+            <button class="logout-btn" id="sidebarLogout" style="display: none;" onclick="logout()" aria-label="Logout">Logout</button>
+        </div>
+    </nav>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="auth-section" id="authSection">
+            <!-- Dynamic content for login/create or user profile -->
+        </div>
+    </nav>
+    <!-- User Details Modal -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">User Details</h2>
+            <div id="viewDetails" class="view-details user-details"></div>
+            <form id="editUserForm" class="edit-form">
+                <input type="hidden" id="editEmail">
+                <div class="form-group">
+                    <label for="editUsername">Username</label>
+                    <input type="text" id="editUsername">
+                </div>
+                <div class="form-group">
+                    <label for="editPassword">Password</label>
+                    <input type="password" id="editPassword">
+                </div>
+                <div class="form-group">
+                    <label for="editRole">Role</label>
+                    <select id="editRole">
+                        <option value="user">User</option>
+                        <option value="moderator">Moderator</option>
+                        <option value="admin">Admin</option>
+                        <option value="superadmin">Super Admin</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn">Save Changes</button>
+                <button type="button" class="btn btn-secondary" onclick="cancelEdit()">Cancel</button>
+            </form>
+            <button id="editBtn" class="btn" style="margin-top: 10px;">Edit User</button>
+        </div>
+    </div>
+    <!-- Auth Section -->
+    <section id="auth" class="page-section active">
+        <div class="auth-container">
+            <h2 style="text-align: center; margin-bottom: 20px;">Welcome to StreamPlay Pro</h2>
+            <div class="auth-toggle">
+                <button class="btn" onclick="switchForm('login')" aria-label="Switch to Login Form">Login</button>
+                <button class="btn btn-secondary" onclick="switchForm('register')" aria-label="Switch to Register Form">Create Account</button>
+            </div>
+            <form id="loginForm" class="auth-form active">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required aria-required="true">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required aria-required="true">
+                    <i class="fas fa-eye password-toggle" onclick="togglePassword('loginPassword')" aria-label="Toggle Password Visibility"></i>
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">Login</button>
+            </form>
+            <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label for="registerUsername">Username</label>
+                    <input type="text" id="registerUsername" required aria-required="true">
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" required aria-required="true">
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" required aria-required="true">
+                    <i class="fas fa-eye password-toggle" onclick="togglePassword('registerPassword')" aria-label="Toggle Password Visibility"></i>
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">Create Account</button>
+            </form>
+        </div>
+    </section>
+    <!-- Home Section -->
+    <section id="home" class="page-section">
+        <div class="header">
+            <h1><i class="fas fa-play-circle"></i> StreamPlay Pro</h1>
+            <p>Your ultimate streaming experience</p>
+            <div class="search-bar">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search posts..." aria-label="Search posts">
+                <select class="filter-select" id="filterSelect" aria-label="Filter posts">
+                    <option value="all">All Posts</option>
+                    <option value="recent">Recent</option>
+                    <option value="popular">Most Popular</option>
+                    <option value="liked">Most Liked</option>
+                </select>
+            </div>
+            <div class="controls">
+                <button class="btn" id="refreshBtn" aria-label="Refresh Feed">
+                    <i class="fas fa-sync-alt"></i> Refresh Feed
+                </button>
+            </div>
+        </div>
+        <!-- Posts Section -->
+        <div class="posts-section" id="postsSection">
+            <!-- Dynamic posts form and list -->
+        </div>
+    </section>
+    <!-- Profile Section -->
+    <section id="profile" class="page-section">
+        <div class="profile-container">
+            <h2 style="text-align: center; margin-bottom: 20px;"><i class="fas fa-user"></i> User Profile</h2>
+            <p style="text-align: center; margin-bottom: 30px; color: #7f8c8d;">View your account details below.</p>
+            <div class="profile-info" id="profileInfo">
+                <!-- Dynamic profile info -->
+            </div>
+        </div>
+    </section>
+    <!-- Profile Settings Section -->
+    <section id="profile-settings" class="page-section">
+        <div class="profile-container">
+            <h2 style="text-align: center; margin-bottom: 20px;"><i class="fas fa-cog"></i> Account Settings</h2>
+            <p style="text-align: center; margin-bottom: 30px; color: #7f8c8d;">Update your account information securely.</p>
+            <form class="settings-form" id="settingsForm">
+                <div class="form-group">
+                    <label for="newEmail">New Email</label>
+                    <input type="email" id="newEmail" placeholder="Enter new email">
+                </div>
+                <div class="form-group">
+                    <label for="oldPassword">Old Password</label>
+                    <input type="password" id="oldPassword" placeholder="Enter old password">
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">New Password</label>
+                    <input type="password" id="newPassword" placeholder="Enter new password">
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm New Password</label>
+                    <input type="password" id="confirmPassword" placeholder="Confirm new password">
+                </div>
+                <button type="submit" class="btn" style="width: 100%; justify-content: center;">Update Settings</button>
+                <button type="button" class="btn btn-danger" id="deleteAccount" style="width: 100%; justify-content: center; margin-top: 10px;">Delete Account</button>
+            </form>
+        </div>
+    </section>
+    <!-- Preferences Section -->
+    <section id="preferences" class="page-section">
+        <div class="profile-container">
+            <h2 style="text-align: center; margin-bottom: 20px;"><i class="fas fa-sliders-h"></i> Preferences</h2>
+            <p style="text-align: center; margin-bottom: 30px; color: #7f8c8d;">Customize your StreamPlay Pro experience.</p>
+            <div class="preferences-grid">
+                <div class="preference-item">
+                    <span>Default Dark Mode</span>
+                    <input type="checkbox" id="prefDarkMode">
+                </div>
+                <div class="preference-item">
+                    <span>Show Notifications</span>
+                    <input type="checkbox" id="prefNotifications" checked>
+                </div>
+                <div class="preference-item">
+                    <span>Auto-load Comments</span>
+                    <input type="checkbox" id="prefAutoComments" checked>
+                </div>
+                <div class="preference-item">
+                    <span>High-Quality Streaming</span>
+                    <input type="checkbox" id="prefHighQuality">
+                </div>
+                <button class="btn" id="savePreferences" style="grid-column: 1/-1; justify-self: center;">Save Preferences</button>
+            </div>
+        </div>
+    </section>
+    <!-- About Section -->
+    <section id="about" class="page-section">
+        <div class="about-content">
+            <h2>Introduction to StreamPlay Pro</h2>
+            <p>StreamPlay Pro is a cutting-edge, web-based streaming application designed to revolutionize how users manage, share, and enjoy their content. This app provides a seamless platform for posting, organizing, and interacting without the need for complex setups.</p>
+            <h2>Benefits of Using StreamPlay Pro</h2>
+            <ul class="benefits-list">
+                <li><strong>Long-term Preservation:</strong> Keep your content online for years without risk of loss.</li>
+                <li><strong>Effortless Public Access:</strong> Share content publicly with a single link.</li>
+                <li><strong>Seamless Sharing:</strong> Distribute content easily to friends, colleagues, or audiences worldwide via integrated URLs.</li>
+                <li><strong>Anytime, Anywhere Access:</strong> Log in from any web browser on any device to access your library instantly.</li>
+                <li><strong>Cost-Effective:</strong> Leverage free or affordable space, eliminating the need for dedicated servers.</li>
+                <li><strong>Enhanced Collaboration:</strong> Team up on projects by co-sharing for real-time updates.</li>
+                <li><strong>Personalized Analytics:</strong> Track interactions to understand engagement and refine strategies.</li>
+                <li><strong>Privacy Controls:</strong> Maintain ownership while selectively sharing, with options for private profiles and encrypted local data.</li>
+            </ul>
+            <h2>About the Developer</h2>
+            <div class="developer-section">
+                <h3>Ogunleye Michael- The Programmer Popular Known as the Trumpeter</h3>
+                <p>Ogunleye Michael, popularly known as the Trumpeter, is a talented developer and an expert in trumpet playing. He has attended many concerts in Nigeria. He is one of the best programmers in the world. He has developed various apps based on his experience. These apps include AI models, a vision app to see the future, a social media messaging app, and much more.</p>
+            </div>
+            <h2>Conclusion</h2>
+            <p>Join the revolution today and let your stories stream freely with StreamPlay Pro.</p>
+        </div>
+    </section>
+    <!-- Contact Section -->
+    <section id="contact" class="page-section">
+        <div class="contact-container">
+            <h2 style="text-align: center; margin-bottom: 20px;"><i class="fas fa-envelope"></i> Contact Us</h2>
+            <p style="text-align: center; margin-bottom: 30px;">Share your thoughts, suggestions, or support queries with our team.</p>
+            <form class="contact-form" id="contactForm">
+                <div class="form-group">
+                    <label for="contactName">Name</label>
+                    <input type="text" id="contactName" required aria-required="true">
+                </div>
+                <div class="form-group">
+                    <label for="contactEmail">Email</label>
+                    <input type="email" id="contactEmail" required aria-required="true">
+                </div>
+                <div class="form-group">
+                    <label for="contactMessage">Message</label>
+                    <textarea id="contactMessage" placeholder="Tell us more..." required aria-required="true"></textarea>
+                </div>
+                <button type="submit" class="btn" aria-label="Send Contact Message">Send Message</button>
+            </form>
+            <div class="messages-list" id="messagesList">
+                <!-- Dynamic messages -->
+            </div>
+        </div>
+    </section>
+    <!-- Admin Dashboard Section -->
+    <section id="admin-dashboard" class="page-section">
+        <div class="header">
+            <h1><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h1>
+            <p>Overview of app metrics and activity</p>
+        </div>
+        <div class="admin-container">
+            <div class="stats" id="adminStats">
+                <!-- Dynamic stats -->
+            </div>
+        </div>
+    </section>
+    <!-- Admin Posts Section -->
+    <section id="admin-posts" class="page-section">
+        <div class="header">
+            <h1><i class="fas fa-video"></i> Post Management</h1>
+            <p>View and moderate all posts</p>
+        </div>
+        <div class="admin-container">
+            <div class="admin-header">
+                <h2>Total Posts: <span id="postCount">0</span></h2>
+                <input type="text" class="admin-search" id="postSearch" placeholder="Search posts by author or text...">
+            </div>
+            <div class="admin-list" id="adminPostsList">
+                <!-- Dynamic posts -->
+            </div>
+        </div>
+    </section>
+    <!-- Admin Users Section -->
+    <section id="admin-users" class="page-section">
+        <div class="header">
+            <h1><i class="fas fa-users"></i> User Management</h1>
+            <p>View and manage all registered users</p>
+        </div>
+        <div class="admin-container">
+            <div class="admin-header">
+                <h2>Total Users: <span id="userCount">0</span></h2>
+                <input type="text" class="admin-search" id="userSearch" placeholder="Search users by email or username...">
+            </div>
+            <div class="admin-list" id="usersList">
+                <!-- Dynamic users -->
+            </div>
+        </div>
+    </section>
+    <!-- Admin Messages Section -->
+    <section id="admin-messages" class="page-section">
+        <div class="header">
+            <h1><i class="fas fa-envelope-open"></i> Contact Messages</h1>
+            <p>Monitor and respond to user inquiries</p>
+        </div>
+        <div class="admin-container">
+            <div class="admin-header">
+                <h2>Total Messages: <span id="messageCount">0</span></h2>
+                <input type="text" class="admin-search" id="messageSearch" placeholder="Search messages by name or email...">
+            </div>
+            <div class="admin-list" id="messagesAdminList">
+                <!-- Dynamic messages with reply -->
+            </div>
+        </div>
+    </section>
+    <!-- Admin Settings Section -->
+    <section id="admin-settings" class="page-section">
+        <div class="header">
+            <h1><i class="fas fa-cog"></i> System Settings</h1>
+            <p>Configure app-wide settings</p>
+        </div>
+        <div class="admin-container">
+            <form id="adminSettingsForm">
+                <div class="form-group">
+                    <label for="appTitle">App Title</label>
+                    <input type="text" id="appTitle" value="StreamPlay Pro">
+                </div>
+                <button type="submit" class="btn">Save Settings</button>
+            </form>
+        </div>
+    </section>
+    <!-- Admin Logs Section -->
+    <section id="admin-logs" class="page-section">
+        <div class="header">
+            <h1><i class="fas fa-file-alt"></i> Activity Logs</h1>
+            <p>View recent admin and system activities</p>
+        </div>
+        <div class="admin-container">
+            <div class="admin-header">
+                <h2>Total Logs: <span id="logCount">0</span></h2>
+                <input type="text" class="admin-search" id="logSearch" placeholder="Search logs by action or actor...">
+            </div>
+            <div class="logs-controls">
+                <select id="logActionFilter">
+                    <option value="">All Actions</option>
+                    <option value="create">Create</option>
+                    <option value="update">Update</option>
+                    <option value="delete">Delete</option>
+                    <option value="system">System</option>
+                </select>
+                <select id="logTypeFilter">
+                    <option value="">All Types</option>
+                    <option value="user">User</option>
+                    <option value="post">Post</option>
+                    <option value="message">Message</option>
+                    <option value="system">System</option>
+                </select>
+                <select id="logActorFilter">
+                    <option value="">All Actors</option>
+                    <!-- Dynamic actors -->
+                </select>
+                <select id="logRoleFilter">
+                    <option value="">All Roles</option>
+                    <option value="user">User</option>
+                    <option value="moderator">Moderator</option>
+                    <option value="admin">Admin</option>
+                    <option value="superadmin">Super Admin</option>
+                    <option value="system">System</option>
+                    <option value="guest">Guest</option>
+                </select>
+                <button class="btn" onclick="exportLogsToCSV()"><i class="fas fa-download"></i> Export CSV</button>
+                <button class="btn btn-secondary" onclick="clearLogs()"><i class="fas fa-trash"></i> Clear Logs</button>
+            </div>
+            <div class="logs-table-container">
+                <table class="logs-table" id="logsTable">
+                    <thead>
+                        <tr>
+                            <th class="action-cell">Action <i class="fas fa-sort" onclick="sortLogs('action')"></i></th>
+                            <th class="type-cell">Type <i class="fas fa-sort" onclick="sortLogs('type')"></i></th>
+                            <th class="actor-cell">Actor <i class="fas fa-sort" onclick="sortLogs('actor')"></i></th>
+                            <th class="role-cell">Role <i class="fas fa-sort" onclick="sortLogs('role')"></i></th>
+                            <th class="age-cell">Age</th>
+                            <th class="timestamp-cell">Timestamp <i class="fas fa-sort" onclick="sortLogs('timestamp')"></i></th>
+                            <th class="details-cell">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsTableBody">
+                        <!-- Dynamic logs -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="logs-pagination" id="logsPagination">
+                <!-- Dynamic pagination -->
+            </div>
+        </div>
+    </section>
+    <!-- Admin Backup Section -->
+    <section id="admin-backup" class="page-section">
+        <div class="header">
+            <h1><i class="fas fa-download"></i> Data Backup</h1>
+            <p>Backup and restore app data</p>
+        </div>
+        <div class="admin-container">
+            <button class="btn" id="backupBtn">Download Full Backup</button>
+            <input type="file" id="restoreFile" accept=".json" style="margin-top: 10px;">
+            <button class="btn btn-secondary" id="restoreBtn">Restore from File</button>
+        </div>
+    </section>
+    <!-- Footer -->
+    <div class="footer">
+        <p>StreamPlay Pro &copy; 2025 | Developed By OGUNLEYE MICHAEL | Contact Us: ayomichael102@gmail.com<span id="lastUpdate">Last update: September 30, 2025</span></p>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+     <!-- Link to JavaScript -->
+    <script src="script.js"></script>
+   </body>
+</html>
